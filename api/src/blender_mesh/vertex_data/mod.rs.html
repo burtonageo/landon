@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `blender-mesh/src/vertex_data/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../blender_mesh/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">mod</span> <span class="ident">vertex_attribute</span>;
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="self">self</span>::<span class="ident">vertex_attribute</span>::{<span class="ident">AttributeSize</span>, <span class="ident">BoneAttributes</span>, <span class="ident">VertexAttribute</span>};
+
+<span class="doccomment">/// Per vertex data from the BlenderMesh.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// When exporting from Blender there data is exported with multiple indices,</span>
+<span class="doccomment">/// then after running `combine_vertex_indices` there will be one single index</span>
+<span class="doccomment">/// for all of the vertex data.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">VertexData</span> {
+    <span class="doccomment">/// The data has multiple indices per vertex, such as one for position data, uvs and normals,</span>
+    <span class="doccomment">/// etc.</span>
+    <span class="ident">Multi</span>(<span class="ident">MultiIndexVertexData</span>),
+    <span class="doccomment">/// The data has one single index per vertex</span>
+    <span class="ident">Single</span>(<span class="ident">SingleIndexVertexData</span>),
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">VertexData</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">VertexData</span>::<span class="ident">Multi</span>(<span class="ident">MultiIndexVertexData</span>::<span class="ident">default</span>())
+    }
+}
+
+<span class="doccomment">/// Vertex data with multiple indices - not suited for OpenGL and other single index rendering</span>
+<span class="doccomment">/// pipelines, but good for on disk storage as their is less data duplicated when there are</span>
+<span class="doccomment">/// multiple indices.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MultiIndexVertexData</span> {
+    <span class="doccomment">/// The number of vertices that comprise each face of the mesh.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// For example, [3, 4, 4, 3, 3, 4] would mean that the first face has 3 vertices (triangle),</span>
+    <span class="doccomment">/// the next face has 4 (quad), then the next face has 4, etc.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Example Use Cases</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// - Triangulation, where faces with more than 3 vertices need to be split into triangles.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// - Calculating vertex tangents, where all vertices in the same face will have the same</span>
+    <span class="doccomment">///   tangent.</span>
+    <span class="ident">vertices_in_each_face</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// The amount that the bones in the arent armature influence each vertex</span>
+    <span class="ident">bone_influences</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BoneInfluences</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// All of the x, y and z positions of the vertices in this mesh, indexed by `position_indices`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// For example, [0., 1., 2., 3., 4. 5.] would mean that there are two vertex positions.</span>
+    <span class="doccomment">/// (0., 1., 2.) and (3., 4., 5.).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This does not, however, mean that there are two vertices. There could be multiple vertices</span>
+    <span class="doccomment">/// that happened to have the same positions.</span>
+    <span class="ident">positions</span>: <span class="ident">VertexAttribute</span>,
+    <span class="doccomment">/// Indices of each vertex positions for this mesh. Position index 0 would be the 0 index</span>
+    <span class="doccomment">/// in the positions vector.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Position index 1 would be the [3] index in the positions vector. index 2 -&gt; [6], etc.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When referenced in conjunction with `vertices_in_each_face` you can determine the</span>
+    <span class="doccomment">/// positions of the vertices in each face.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// For example, if `vertices_in_each_face: [3, 4, 3]`, then the first three position indices</span>
+    <span class="doccomment">/// give you the positions for the triangle for the first face, then the next 4 position indices</span>
+    <span class="doccomment">/// give you the quad for the next face, then the next three give you positions for the next</span>
+    <span class="doccomment">/// triangle.</span>
+    <span class="ident">position_indices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// All of the normals, indexed by `normal_indices`</span>
+    <span class="ident">normals</span>: <span class="ident">VertexAttribute</span>,
+    <span class="doccomment">/// Indices into the normals</span>
+    <span class="ident">normal_indices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// All of the uvs, indexed by uv_indices</span>
+    <span class="ident">uvs</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VertexAttribute</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Indices into the uvs</span>
+    <span class="ident">uv_indices</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+}
+
+<span class="doccomment">/// Most 3D model file formats export vertex data with multiple indices.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// There might be indices for the positions, normals and uvs.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The `SingleIndexVertexData` is vertex data that only has one index.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// When we&#39;ve run [`BlenderMesh.combine_vertex_indices`] we&#39;ll end up generating</span>
+<span class="doccomment">/// `SingleIndexVertexData`</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SingleIndexVertexData</span> {
+    <span class="ident">positions</span>: <span class="ident">VertexAttribute</span>,
+    <span class="ident">normals</span>: <span class="ident">VertexAttribute</span>,
+    <span class="ident">uvs</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VertexAttribute</span><span class="op">&gt;</span>,
+    <span class="ident">bones</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BoneAttributes</span><span class="op">&gt;</span>,
+}
+
+<span class="doccomment">/// The amount that each bone in the mesh&#39;s parent armature influences each vertex.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// For example, if `bone_indices = [0, 1, 2, 2, 5]` and</span>
+<span class="doccomment">/// `bone_weights = [0.2, 0.4, 0.2, 0.5, 0.5]` and `bones_per_vertex = [3, 2]` then</span>
+<span class="doccomment">/// the first vertex is influenced by bone 0 by 0.2, bone 1 by 0.4 and bone 2 by 0.2.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Then the second vertex is influenced by bone 2 by 0.5 and bone 5 by 0.5</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BoneInfluences</span> {
+    <span class="doccomment">/// The number of bones that affect each vertex.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Example: [3, 5, 2] would mean that the first vertex is influenced by 3 bones, second by</span>
+    <span class="doccomment">/// 5, and third by 2</span>
+    <span class="ident">bones_per_vertex</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// The indices of the bones that affect each vertex.</span>
+    <span class="ident">bone_indices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// The corresponding weights of each bone index</span>
+    <span class="ident">bone_weights</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>,
+}
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "blender_mesh";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
