@@ -1,6 +1,5 @@
 use crate::blender;
-use std::env::{temp_dir, var_os};
-use std::ffi::OsString;
+use std::env::temp_dir;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;

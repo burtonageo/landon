@@ -1,4 +1,6 @@
 use clap::ArgMatches;
+use std::env::var_os;
+use std::ffi::OsString;
 
 mod install;
 pub use self::install::*;
