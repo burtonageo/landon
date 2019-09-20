@@ -6,6 +6,11 @@ pub use self::install::*;
 mod export;
 pub use self::export::*;
 
+#[inline]
+fn exe() -> OsString {
+    var_os("LANDON_BLENDER_EXE").unwrap_or_else(|| "blender".into())
+}
+
 /// Process `landon blender *` subcommands
 ///
 /// @see `landon blender --help`

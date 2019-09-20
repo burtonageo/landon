@@ -1,3 +1,4 @@
+use crate::blender;
 use std::process::Command;
 
 static EXPORT_BLENDER_DATA: &'static str = r#"
@@ -30,7 +31,7 @@ for obj in objects:
 ///
 /// TODO: Integration test this
 pub fn export_blender_data(blender_files: &Vec<String>) -> Result<String, String> {
-    let mut blender_process = Command::new("blender");
+    let mut blender_process = Command::new(blender::exe());
     let blender_process = blender_process.arg("--background");
 
     for blender_file in blender_files {

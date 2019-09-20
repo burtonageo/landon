@@ -1,13 +1,9 @@
+use crate::blender;
 use std::env::{temp_dir, var_os};
 use std::ffi::OsString;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;
-
-#[inline]
-fn blender_exe() -> OsString {
-    var_os("LANDON_BLENDER_EXE").unwrap_or_else(|| "blender".into())
-}
 
 /// Install the blender mesh exporter addon.
 ///
@@ -37,7 +33,7 @@ bpy.ops.wm.save_userpref()
     "#,
     addon_file_path.display());
 
-    Command::new(blender_exe())
+    Command::new(blender::exe())
         .arg("--background")
         .args(&["--python-expr", &install_mesh_to_json_script])
         .spawn()?
@@ -70,7 +66,7 @@ bpy.ops.wm.save_userpref()
     "#,
     addon_file_path.display());
 
-    Command::new(blender_exe())
+    Command::new(blender::exe())
         .arg("--background")
         .args(&["--python-expr", &install_armature_to_json_script])
         .spawn()?
