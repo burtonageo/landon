@@ -1,7 +1,13 @@
-use std::env::temp_dir;
+use std::env::{temp_dir, var_os};
+use std::ffi::OsString;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;
+
+#[inline]
+fn blender_exe() -> OsString {
+    var_os("LANDON_BLENDER_EXE").unwrap_or_else(|| "blender".into())
+}
 
 /// Install the blender mesh exporter addon.
 ///
@@ -12,7 +18,7 @@ pub fn install_mesh_to_json() -> std::io::Result<()> {
     let addon_file_path = temp_dir().join("blender-mesh-to-json.py");
     let mesh_to_json_addon = include_str!("../../blender-mesh-to-json.py");
     let mut addon_file = File::create(&addon_file_path)?;
-    addon_file.write_all(mesh_to_json_addon.as_bytes()).unwrap();
+    addon_file.write_all(mesh_to_json_addon.as_bytes())?;
 
     let install_mesh_to_json_script = format!(r#"
 # Install the addon and save the user's preferences
@@ -31,15 +37,11 @@ bpy.ops.wm.save_userpref()
     "#,
     addon_file_path.display());
 
-    // TODO: Support an environment variable to override the path to the executable
-    let blender_executable = "blender";
-    Command::new(blender_executable)
+    Command::new(blender_exe())
         .arg("--background")
         .args(&["--python-expr", &install_mesh_to_json_script])
-        .spawn()
-        .unwrap()
-        .wait()
-        .unwrap();
+        .spawn()?
+        .wait()?;
 
     Ok(())
 }
@@ -53,7 +55,7 @@ pub fn install_armature_to_json() -> std::io::Result<()> {
     let addon_file_path = temp_dir().join("blender-armature-to-json.py");
     let armature_to_json = include_str!("../../blender-armature-to-json.py");
     let mut addon_file = File::create(&addon_file_path)?;
-    addon_file.write_all(armature_to_json.as_bytes()).unwrap();
+    addon_file.write_all(armature_to_json.as_bytes())?;
 
     let install_armature_to_json_script = format!(r#"
 import bpy
@@ -68,15 +70,11 @@ bpy.ops.wm.save_userpref()
     "#,
     addon_file_path.display());
 
-    // TODO: Support an environment variable to override the path to the executable
-    let blender_executable = "blender";
-    Command::new(blender_executable)
+    Command::new(blender_exe())
         .arg("--background")
         .args(&["--python-expr", &install_armature_to_json_script])
-        .spawn()
-        .unwrap()
-        .wait()
-        .unwrap();
+        .spawn()?
+        .wait()?;
 
     Ok(())
 }

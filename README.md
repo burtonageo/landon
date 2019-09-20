@@ -99,6 +99,10 @@ landon -h
 landon blender export -h
 ```
 
+## Environment Variables
+
+- `LANDON_BLENDER_EXE`: Overrides the path to the `blender` executable file.
+
 ## To test
 
 ```sh
